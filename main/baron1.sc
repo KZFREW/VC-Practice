@@ -842,6 +842,7 @@ ENDIF
 
 // Practice SCM changes this WHILE condition so we fail when we leave the radius and return to practice area
 WHILE LOCATE_PLAYER_ANY_MEANS_3D player1 366.170074 478.839020 11.644287 80.0 80.0 80.0 FALSE
+// WHILE NOT LOCATE_PLAYER_ANY_MEANS_3D player1 34.9 1086.8 14.5 20.0 20.0 10.0 FALSE
 // OR NOT LOCATE_CHAR_ANY_MEANS_3D traitor 34.9 1086.8 14.5 15.0 15.0 10.0 FALSE
 	WAIT 0									 
 

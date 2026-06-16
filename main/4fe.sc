@@ -1446,15 +1446,15 @@ RETURN
 // **********************************************Mission Serg1 passed*****************************************
 
 mission_serg1_passed:
-
-flag_sergio_mission1_passed = 1
+// Practice SCM comments out some progress markers to enable free replay
+// flag_sergio_mission1_passed = 1
 PRINT_WITH_NUMBER_BIG ( M_PASS ) 500 5000 1 //"Mission Passed!"
 PLAY_MISSION_PASSED_TUNE 1 
 CLEAR_WANTED_LEVEL player1
 ADD_SCORE player1 500
-REGISTER_MISSION_PASSED TEX_1
-PLAYER_MADE_PROGRESS 1
-START_NEW_SCRIPT serg_mission2_loop
+// REGISTER_MISSION_PASSED TEX_1 
+// PLAYER_MADE_PROGRESS 1
+// START_NEW_SCRIPT serg_mission2_loop
 CREATE_CLOTHES_PICKUP 106.5 253.0 21.7 4 clothes_pickup4
 clothes4_created = 1
 START_NEW_SCRIPT cloth3
