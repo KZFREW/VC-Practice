@@ -2,7 +2,7 @@ MISSION_START
 SCRIPT_NAME PRAC2
 
 // Initializing vars
-VAR_INT fouriron_comet fouriron_marker ahod_car ahod_dude ahod_marker the_party_taxi_ip_cab the_party_taxi_ip_marker the_party_taxi_ip_mercedes
+VAR_INT fouriron_comet fouriron_marker ahod_car ahod_dude ahod_marker the_party_taxi_ip_cab the_party_taxi_ip_marker the_party_taxi_ip_mercedes tc_inject tc_dude tc_dude2 tc_marker
 
 allow_movement_after_cleanup = 0
 selecting = 1
@@ -14,6 +14,7 @@ flag_protect_mission1_passed = 0    // Bar Brawl not passed
 flag_assin_mission3_passed = 0      // Autocide not passed
 flag_mob_97 = 0                     // Autocide call not taken
 flag_mob_96 = 0                     // COATCI call not taken
+flag_baron_mission1_passed = 0      // The Chase passed
 
 GOSUB practice_begin2
 
@@ -53,11 +54,15 @@ SET_PLAYER_CONTROL player1 OFF
 REQUEST_MODEL COMET
 REQUEST_MODEL WASHING
 REQUEST_MODEL KAUFMAN
+REQUEST_MODEL BFINJECT
 
 REQUEST_MODEL HMOST
 REQUEST_MODEL SPECIAL03
+REQUEST_MODEL SGa
 
 REQUEST_MODEL M4
+
+LOAD_SPECIAL_CHARACTER 1 SGC
 
 LOAD_ALL_MODELS_NOW
 
@@ -88,6 +93,15 @@ LOAD_ALL_MODELS_NOW
     CREATE_CHAR_INSIDE_CAR the_party_taxi_ip_cab PEDTYPE_CIVFEMALE SPECIAL03 the_party_taxi_ip_mercedes
     ADD_SPHERE -1146.712646 -1283.178223 14.873811 2.0 the_party_taxi_ip_marker
 
+// The Chase finish
+    CREATE_CAR BFINJECT -1141.469116 -1278.931396 -100.0 tc_inject
+    SET_CAR_HEADING tc_inject 90.0
+    SET_CAR_HEALTH tc_inject 10000
+    FREEZE_CAR_POSITION tc_inject TRUE
+    CREATE_CHAR_INSIDE_CAR tc_inject PEDTYPE_CIVMALE SGa tc_dude
+    CREATE_CHAR_AS_PASSENGER tc_inject PEDTYPE_CIVMALE SGa 0 tc_dude2
+    ADD_SPHERE -1145.234131 -1279.079590 14.872563 2.0 tc_marker
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////// Wait loop for player's decision for practice, and the actual triggers for the spheres/markers /////////////
 WHILE LOCATE_PLAYER_ANY_MEANS_2D player1 -1147.4 -1271.25 27.0 21.75 FALSE
@@ -108,6 +122,11 @@ WHILE LOCATE_PLAYER_ANY_MEANS_2D player1 -1147.4 -1271.25 27.0 21.75 FALSE
         GOTO mission_cleanup2
     ENDIF
 
+// The Chase finish
+    IF LOCATE_PLAYER_ON_FOOT_3D player1 -1145.234131 -1279.079590 14.872563 1.5 1.5 1.5 FALSE
+        GOTO mission_cleanup2
+    ENDIF
+
 ENDWHILE
 
 // Fail if exit the area
@@ -118,16 +137,20 @@ mission_cleanup2:
     REMOVE_SPHERE fouriron_marker
     REMOVE_SPHERE ahod_marker
     REMOVE_SPHERE the_party_taxi_ip_marker
+    REMOVE_SPHERE tc_marker
 
     MARK_MODEL_AS_NO_LONGER_NEEDED COMET
     MARK_MODEL_AS_NO_LONGER_NEEDED WASHING
     MARK_MODEL_AS_NO_LONGER_NEEDED HMOST
     MARK_MODEL_AS_NO_LONGER_NEEDED SPECIAL03
     MARK_MODEL_AS_NO_LONGER_NEEDED M4
+    MARK_MODEL_AS_NO_LONGER_NEEDED SGa
+    MARK_MODEL_AS_NO_LONGER_NEEDED BFINJECT
 
     DELETE_CAR fouriron_comet
     DELETE_CAR ahod_car
     DELETE_CAR the_party_taxi_ip_cab
+    DELETE_CAR tc_inject
 
     MISSION_HAS_FINISHED
 
