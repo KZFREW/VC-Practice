@@ -122,9 +122,9 @@ WHILE LOCATE_PLAYER_ANY_MEANS_2D player1 -1147.4 -1271.25 27.0 21.75 FALSE
         GOTO mission_cleanup2
     ENDIF
 
-// The Chase finish
+// The Chase finish subroutine
     IF LOCATE_PLAYER_ON_FOOT_3D player1 -1145.234131 -1279.079590 14.872563 1.5 1.5 1.5 FALSE
-        GOTO mission_cleanup2
+        GOSUB tc_finish
     ENDIF
 
 ENDWHILE
@@ -161,4 +161,111 @@ mission_cleanup2:
 
     flag_player_on_mission = 0
     selecting = 0
+    RETURN
+
+// The Chase mission fragment
+tc_finish:
+    VAR_INT traitor traitors_car temp_roadblock radar_blip_traitors_car flag_baron1_on_foot
+    LOAD_MISSION_TEXT BARON1
+    flag_baron1_on_foot = 0
+
+    // Practice SCM setup stuff
+    SET_PLAYER_COORDINATES player1 116.306862 1001.447388 13.5
+    CREATE_OBJECT_NO_OFFSET nt_roadblockCI -97.3 1061.8 11.6 temp_roadblock // temporary roadblock for driving practice
+    WAIT 0
+    CREATE_CAR BFINJECT 116.306862 1001.447388 13.5 traitors_car
+    SET_CAR_HEAVY traitors_car TRUE
+    SET_CAR_STRONG traitors_car TRUE
+    SET_CAR_HEADING traitors_car 72.0
+    WARP_PLAYER_INTO_CAR player1 traitors_car
+    SET_PLAYER_CONTROL player1 ON
+    CREATE_CHAR_AS_PASSENGER traitors_car PEDTYPE_CIVMALE SGa 0 traitor
+    SET_CHAR_STAY_IN_CAR_WHEN_JACKED traitor TRUE
+    SET_CHAR_RUNNING traitor TRUE
+    RESTORE_CAMERA_JUMPCUT
+    SET_CAMERA_BEHIND_PLAYER
+
+    // mission ending loop
+    // Practice SCM removes much AI scripting and replaces with basic checks intended to keep the mission state similar to a live run
+    // Traitor sits passenger in the BF and returns to it when jacked for any reason, mission fails if he (or the car) dies
+    WHILE NOT LOCATE_PLAYER_ANY_MEANS_3D player1 34.9 1086.8 14.5 20.0 20.0 10.0 FALSE
+    OR NOT LOCATE_CHAR_ANY_MEANS_3D traitor 34.9 1086.8 14.5 15.0 15.0 10.0 FALSE
+        WAIT 0									 
+            IF IS_CHAR_DEAD traitor
+                PRINT_NOW ( COK1_9 ) 5000 2 //Not supposed to kill him!
+                EXPLODE_PLAYER_HEAD player1
+                WAIT 5000 // Practice SCM crash prevention
+            ENDIF
+
+            IF NOT IS_CAR_DEAD traitors_car
+                IF NOT IS_CHAR_DEAD traitor
+                AND NOT IS_CHAR_IN_CAR traitor traitors_car
+                    CLEAR_CHAR_THREAT_SEARCH traitor
+                    SET_CHAR_OBJ_ENTER_CAR_AS_PASSENGER traitor traitors_car
+                ENDIF
+
+                IF NOT IS_PLAYER_IN_CAR player1 traitors_car
+                AND flag_baron1_on_foot = 0
+                    ADD_BLIP_FOR_CAR traitors_car radar_blip_traitors_car
+                    flag_baron1_on_foot = 1
+                ENDIF
+
+                IF IS_PLAYER_IN_CAR player1 traitors_car
+                AND flag_baron1_on_foot = 1
+                    REMOVE_BLIP radar_blip_traitors_car
+                    flag_baron1_on_foot = 0
+                ENDIF
+            ELSE // BF dead, let's reset
+                EXPLODE_PLAYER_HEAD player1
+                WAIT 5000
+            ENDIF
+    ENDWHILE
+
+    SET_PLAYER_CONTROL player1 OFF
+    
+
+    WAIT 0
+
+    SWITCH_WIDESCREEN ON
+
+    IF NOT IS_CHAR_DEAD	traitor
+        IF IS_CHAR_IN_ANY_CAR traitor
+            WARP_CHAR_FROM_CAR_TO_COORD traitor 56.4 1081.1 15.0		
+        ENDIF
+
+        DETACH_CHAR_FROM_CAR traitor
+        CLEAR_CHAR_THREAT_SEARCH traitor
+        SET_CHAR_OBJ_NO_OBJ traitor
+        SET_CHAR_COORDINATES traitor 56.4 1081.1 15.0 
+        SET_CHAR_HEADING traitor 275.0  
+        SET_CHAR_OBJ_RUN_TO_COORD traitor 72.4 1082.8
+        SET_CHAR_USE_PEDNODE_SEEK traitor FALSE
+    ENDIF
+
+    SET_FIXED_CAMERA_POSITION 79.834 1069.695 14.212 0.0 0.0 0.0 
+    POINT_CAMERA_AT_POINT 79.273 1070.427 14.597 JUMP_CUT
+
+    WAIT 3000
+
+    DELETE_CHAR traitor
+
+    SET_PLAYER_CONTROL player1 ON
+    SWITCH_WIDESCREEN OFF
+    RESTORE_CAMERA_JUMPCUT
+    PLAY_MISSION_PASSED_TUNE 1
+    PRINT_WITH_NUMBER_BIG ( M_PASS ) 1000 5000 1 //"Mission Passed!"
+    CLEAR_WANTED_LEVEL player1
+    ADD_SCORE player1 1000 
+
+    // Practice SCM delay to practice bridge driving
+    WAIT 8000
+
+    // Practice SCM subroutine cleanup
+    WARP_PLAYER_FROM_CAR_TO_COORD player1 -1155.529053 -1275.438477 14.813583
+    DELETE_CAR traitors_car
+    DELETE_OBJECT temp_roadblock
+    REMOVE_BLIP radar_blip_traitors_car
+    SET_PLAYER_HEADING player1 180.0
+    RESTORE_CAMERA_JUMPCUT
+    SET_CAMERA_BEHIND_PLAYER
     RETURN

@@ -18,6 +18,7 @@ ENDIF
 
 GOSUB mission_cleanup_baron1
 
+// Practice SCM warp back to practice2 area after cleanup
 WARP_PLAYER_FROM_CAR_TO_COORD player1 -1155.529053 -1275.438477 14.813583
 SET_PLAYER_HEADING player1 180.0
 RESTORE_CAMERA_JUMPCUT
@@ -1145,7 +1146,7 @@ RELEASE_WEATHER
 DELETE_CHAR stunt_double
 MARK_OBJECT_AS_NO_LONGER_NEEDED roof_barrel1 
 MARK_OBJECT_AS_NO_LONGER_NEEDED roof_barrel2 
-WAIT 8000
+WAIT 8000 // Practice SCM 8sec wait to let player practice bridge movement
 DELETE_OBJECT temp_roadblock
 REMOVE_ALL_SCRIPT_FIRES
 MISSION_HAS_FINISHED
