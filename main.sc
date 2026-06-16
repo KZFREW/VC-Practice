@@ -1260,7 +1260,7 @@ WAIT mission_trigger_wait_time
 GOTO general_mission3_loop_inner
 } 
 
-/* The Chase
+// The Chase
 {
 baron_mission1_loop:
 SCRIPT_NAME BAR1
@@ -1282,7 +1282,6 @@ WAIT mission_trigger_wait_time
 	ENDIF
 GOTO baron_mission1_loop_inner
 }
-*/
 
 // Phnom Penh '86
 {

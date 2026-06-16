@@ -18,12 +18,6 @@ ENDIF
 
 GOSUB mission_cleanup_baron1
 
-// Practice SCM warp back to practice2 area after cleanup
-WARP_PLAYER_FROM_CAR_TO_COORD player1 -1155.529053 -1275.438477 14.813583
-SET_PLAYER_HEADING player1 180.0
-RESTORE_CAMERA_JUMPCUT
-SET_CAMERA_BEHIND_PLAYER
-
 MISSION_END
 
 
@@ -33,7 +27,7 @@ LVAR_INT traitor traitors_objectives_complete roof_fires_created blow_up_crates_
 LVAR_INT fake_player dumpster_cut cheating_biker player_too_close_to_traitor
 LVAR_INT traitors_mate chase_moped cs_telly
 LVAR_INT stunt_double roof_barrel1 roof_barrel2 roof_barrel1_fire roof_barrel2_fire
-VAR_INT roof_barrel3_fire traitors_car abandon_upsidedown_car temp_roadblock
+VAR_INT roof_barrel3_fire traitors_car abandon_upsidedown_car
 VAR_FLOAT traitorX traitorY traitorZ
 
 // ***************************************Mission Start***************************************
@@ -126,7 +120,7 @@ SET_CUTSCENE_ANIM cs_telly telly
 
 CLEAR_AREA -379.2 -536.4 16.2 0.5 TRUE
 // SET_PLAYER_COORDINATES player1 -379.2 -536.4 16.2
-SET_PLAYER_COORDINATES player1 99.122452 1007.345337 11.260673 // Practice SCM change
+SET_PLAYER_COORDINATES player1 366.170074 478.839020 11.644287 // Practice SCM change
 SET_PLAYER_HEADING player1 0.0
 
 DO_FADE 1500 FADE_IN
@@ -307,7 +301,7 @@ REQUEST_MODEL SGa
 
 	ENDWHILE
 
-GOTO practice_finish_cheat // Practice SCM Jump
+GOTO practice_finish_skip // Practice SCM Jump
 	
 WHILE NOT LOCATE_STOPPED_PLAYER_IN_CAR_3D player1 380.3 247.4 10.0 3.0 3.0 3.0 TRUE
 AND NOT LOCATE_PLAYER_ON_FOOT_3D player1 380.3 247.4 10.0 3.0 3.0 3.0 FALSE
@@ -560,6 +554,18 @@ TIMERB = 0
 
 WAIT 400
 
+practice_finish_skip:
+
+CREATE_CHAR PEDTYPE_CIVMALE SPECIAL05 366.0 444.6 19.7 traitor
+GIVE_WEAPON_TO_CHAR traitor WEAPONTYPE_RUGER 500
+SHUT_CHAR_UP traitor TRUE
+SET_CHAR_HEALTH traitor 600
+CLEAR_CHAR_THREAT_SEARCH traitor
+WAIT 0
+ADD_BLIP_FOR_CHAR traitor baron_blip1
+SET_CHAR_PERSONALITY traitor PEDSTAT_TOUGH_GUY
+SET_CHAR_RUNNING traitor TRUE
+
 SET_PLAYER_CONTROL player1 ON
 
 IF NOT IS_PLAYER_ON_ANY_BIKE Player1
@@ -593,7 +599,7 @@ WHILE NOT IS_CHAR_IN_CAR traitor traitors_car
 		IF NOT IS_CHAR_DEAD traitor
 
 			IF traitors_objectives_complete = 0
-
+			/* Practice SCM 
 				IF LOCATE_CHAR_ANY_MEANS_3D traitor 351.6 341.3 18.0 1.0 1.0 5.0 FALSE //if at plank1a
 					SET_CHAR_OBJ_RUN_TO_COORD traitor 351.6 347.0 // Goto plank1b
 					SET_CHAR_USE_PEDNODE_SEEK traitor FALSE	 
@@ -708,6 +714,7 @@ WHILE NOT IS_CHAR_IN_CAR traitor traitors_car
 						ENDIF	 
 					ENDIF
 				ENDIF
+			*/
 
 				IF NOT IS_CHAR_DEAD	traitor
 
@@ -766,6 +773,7 @@ WHILE NOT IS_CHAR_IN_CAR traitor traitors_car
 			ENDIF
 		ENDIF
 
+/* Practice SCM does not spawn the barrels
 		IF HAS_OBJECT_BEEN_DAMAGED roof_barrel1
 		OR HAS_OBJECT_BEEN_DAMAGED roof_barrel2
 			IF roof_fires_created = 0
@@ -778,6 +786,7 @@ WHILE NOT IS_CHAR_IN_CAR traitor traitors_car
 				ENDIF
 			ENDIF				  
 		ENDIF
+*/
 
 		IF NOT IS_CHAR_DEAD	traitor 
 			IF traitors_objectives_complete = 0		
@@ -831,10 +840,9 @@ TIMERA = 0
 IF NOT IS_CHAR_DEAD	traitor
 ENDIF
 
-practice_finish_skip:
-
-WHILE NOT LOCATE_PLAYER_ANY_MEANS_3D player1 34.9 1086.8 14.5 20.0 20.0 10.0 FALSE
-OR NOT LOCATE_CHAR_ANY_MEANS_3D traitor 34.9 1086.8 14.5 15.0 15.0 10.0 FALSE
+// Practice SCM changes this WHILE condition so we fail when we leave the radius and return to practice area
+WHILE LOCATE_PLAYER_ANY_MEANS_3D player1 366.170074 478.839020 11.644287 80.0 80.0 80.0 FALSE
+// OR NOT LOCATE_CHAR_ANY_MEANS_3D traitor 34.9 1086.8 14.5 15.0 15.0 10.0 FALSE
 	WAIT 0									 
 
 		IF IS_CHAR_DEAD traitor
@@ -1045,6 +1053,11 @@ OR NOT LOCATE_CHAR_ANY_MEANS_3D traitor 34.9 1086.8 14.5 15.0 15.0 10.0 FALSE
 */
 ENDWHILE
 
+
+// Practice SCM jumps to fail once radius has been left
+GOTO mission_baron1_failed
+//////////////////////////
+
 SET_PLAYER_CONTROL player1 OFF
 
 WAIT 0
@@ -1078,26 +1091,18 @@ RESTORE_CAMERA_JUMPCUT
  
 GOTO mission_baron1_passed
 
-practice_finish_cheat: // Practice SCM
-CREATE_OBJECT_NO_OFFSET nt_roadblockCI -97.3 1061.8 11.6 temp_roadblock // temporary roadblock for driving practice
-WAIT 100
-CREATE_CAR bfinject 99.122452 1007.345337 11.260673 traitors_car
-SET_CAR_HEAVY traitors_car TRUE
-SET_CAR_STRONG traitors_car TRUE
-SET_CAR_HEADING traitors_car 72.0
-WARP_PLAYER_INTO_CAR player1 traitors_car
-SET_PLAYER_CONTROL player1 ON
-CREATE_CHAR_AS_PASSENGER traitors_car PEDTYPE_CIVMALE SPECIAL05 0 traitor
-CREATE_CHAR PEDTYPE_CIVMALE SPECIAL05 87.734238 998.518616 10.980326 traitors_mate
-SET_CHAR_HEALTH traitors_mate 0
-RESTORE_CAMERA_JUMPCUT
-SET_CAMERA_BEHIND_PLAYER
-GOTO practice_finish_skip
-
  // Mission baron1 failed
 
+// Practice SCM warps the player back to prac2 area, removes failed text, removes blip here instead of cleanup (otherwise it doesn't show when spamming attempts), clears wanted level
 mission_baron1_failed:
-PRINT_BIG ( M_FAIL ) 5000 1 //"Mission Failed"
+// PRINT_BIG ( M_FAIL ) 5000 1 //"Mission Failed"
+REMOVE_BLIP baron_blip1 // Practice SCM - move blip removal to failed from cleanup, otherwise it doesn't work when spamming attempts
+CLEAR_WANTED_LEVEL player1
+WAIT 250
+WARP_PLAYER_FROM_CAR_TO_COORD player1 -1155.529053 -1275.438477 14.813583
+SET_PLAYER_HEADING player1 180.0
+RESTORE_CAMERA_JUMPCUT
+SET_CAMERA_BEHIND_PLAYER
 RETURN
 
    
@@ -1123,7 +1128,6 @@ RETURN
 
 mission_cleanup_baron1:
 GET_GAME_TIMER timer_mobile_start
-REMOVE_BLIP baron_blip1
 MARK_MODEL_AS_NO_LONGER_NEEDED bfinject
 MARK_MODEL_AS_NO_LONGER_NEEDED ruger
 MARK_MODEL_AS_NO_LONGER_NEEDED barrel4
@@ -1146,8 +1150,6 @@ RELEASE_WEATHER
 DELETE_CHAR stunt_double
 MARK_OBJECT_AS_NO_LONGER_NEEDED roof_barrel1 
 MARK_OBJECT_AS_NO_LONGER_NEEDED roof_barrel2 
-WAIT 8000 // Practice SCM 8sec wait to let player practice bridge movement
-DELETE_OBJECT temp_roadblock
 REMOVE_ALL_SCRIPT_FIRES
 MISSION_HAS_FINISHED
 RETURN
