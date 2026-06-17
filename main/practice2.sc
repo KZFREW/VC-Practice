@@ -110,6 +110,9 @@ WHILE LOCATE_PLAYER_ANY_MEANS_2D player1 -1147.4 -1271.25 27.0 21.75 FALSE
 
 // Four Iron snipe
     IF LOCATE_PLAYER_ON_FOOT_3D player1 -1148.422974 -1290.974487 14.881677 1.5 1.5 1.5 FALSE
+        IF NOT HAS_PLAYER_GOT_WEAPON player1 WEAPONTYPE_SNIPERRIFLE
+            GIVE_WEAPON_TO_PLAYER player1 WEAPONTYPE_SNIPERRIFLE 100
+        ENDIF
         GOTO mission_cleanup2
     ENDIF
 
@@ -177,7 +180,7 @@ tc_finish:
     WARP_PLAYER_FROM_CAR_TO_COORD player1 116.306862 1001.447388 13.5
     RESTORE_CAMERA_JUMPCUT
     SET_CAMERA_BEHIND_PLAYER
-    
+
     // Practice SCM setup stuff
     CREATE_OBJECT_NO_OFFSET nt_roadblockCI -97.3 1061.8 11.6 temp_roadblock // temporary roadblock for driving practice
     WAIT 0

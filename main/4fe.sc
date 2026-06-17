@@ -26,6 +26,13 @@ ENDIF
 
 GOSUB mission_cleanup_serg1
 
+// Practice SCM
+WAIT 3000
+WARP_PLAYER_FROM_CAR_TO_COORD player1 -1155.529053 -1275.438477 14.813583
+SET_PLAYER_HEADING player1 180.0
+RESTORE_CAMERA_JUMPCUT
+SET_CAMERA_BEHIND_PLAYER
+
 MISSION_END
  
 // Variables for mission
@@ -305,7 +312,7 @@ golfcart4heading_s1	= 17.252
 SET_TIME_OF_DAY 10 00
 FORCE_WEATHER_NOW WEATHER_EXTRA_SUNNY
 
-/*
+/* Practice SCM - comment out limo cutscene at the construction site
 CLEAR_AREA 299.0 -205.0 10.5 5.0 TRUE
 CLEAR_AREA 305.0 -219.5 10.5 10.0 TRUE
 SET_PLAYER_COORDINATES player1 299.0 -205.0 10.5
@@ -1455,11 +1462,12 @@ ADD_SCORE player1 500
 // REGISTER_MISSION_PASSED TEX_1 
 // PLAYER_MADE_PROGRESS 1
 // START_NEW_SCRIPT serg_mission2_loop
-CREATE_CLOTHES_PICKUP 106.5 253.0 21.7 4 clothes_pickup4
-clothes4_created = 1
-START_NEW_SCRIPT cloth3
+IF clothes4_created = 0 // Practice SCM - IF check to prevent script/pickup spam on repeat attempts
+	CREATE_CLOTHES_PICKUP 106.5 253.0 21.7 4 clothes_pickup4
+	clothes4_created = 1
+	START_NEW_SCRIPT cloth3
+ENDIF
 RETURN
-		
 
 
 // **********************************************Mission cleanup***********************************************
@@ -1502,12 +1510,13 @@ ENDIF
 IF clothes3_created = 1
    CREATE_CLOTHES_PICKUP 364.2 1086.1 19.0 3 clothes_pickup3
 ENDIF
-
+/* Practice SCM comments out to prevent pickup spam
 IF clothes4_created = 1
 	IF NOT flag_sergio_mission1_passed = 1
 	   CREATE_CLOTHES_PICKUP 106.5 253.0 21.7 4 clothes_pickup4
 	ENDIF
 ENDIF
+*/
 
 IF clothes5_created = 1
    CREATE_CLOTHES_PICKUP -1024.5 -433.9 10.9 5 clothes_pickup5
@@ -1522,7 +1531,7 @@ IF clothes7_created = 1
 ENDIF
 
 IF clothes8_created = 1
-    CREATE_CLOTHES_PICKUP 158.3 -1275.9 10.6 9 clothes_pickup8
+    CREATE_CLOTHES_PICKUP -1168.763062 -1305.008911 14.809786 9 clothes_pickup8 // Practice SCM - fixed coords for practice clothes spawn
 ENDIF
 
 IF clothes9_created = 1

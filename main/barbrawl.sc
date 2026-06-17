@@ -14,6 +14,13 @@ IF HAS_DEATHARREST_BEEN_EXECUTED
 	GOSUB mission_failed_protec2
 ENDIF
 GOSUB mission_cleanup_protec2
+
+WAIT 3000 // Practice SCM
+SET_PLAYER_COORDINATES player1 -1162.540771 -1303.468140 14.837565
+SET_PLAYER_HEADING player1 180.0
+RESTORE_CAMERA_JUMPCUT
+SET_CAMERA_BEHIND_PLAYER
+
 MISSION_END
  
 // Variables for mission
@@ -383,6 +390,11 @@ timerb = 0
 fighting_dbp_security:
 WAIT 0
 
+// Practice SCM
+IF IS_WANTED_LEVEL_GREATER player1 0
+	CLEAR_WANTED_LEVEL player1
+ENDIF
+
 IF dbp_time = 0
 	PRINT_NOW ( TAXI2 ) 5000 1 //Out of time
 	GOTO mission_failed_protec2
@@ -721,6 +733,11 @@ ENDIF
 
 chase_to_lighthouse:
 WAIT 0 
+
+// Practice SCM
+IF IS_WANTED_LEVEL_GREATER player1 0
+	CLEAR_WANTED_LEVEL player1
+ENDIF
 
 IF bonus_flags = 0
 	IF IS_CAR_DEAD dbpvan 
@@ -1135,8 +1152,6 @@ ADD_SCORE player1 4000
 REGISTER_MISSION_PASSED BUD_2
 PLAYER_MADE_PROGRESS 1 
 REMOVE_BLIP protect_contact_blip
-SET_PLAYER_COORDINATES player1 -1162.540771 -1303.468140 14.837565
-SET_PLAYER_HEADING player1 180.0
 //ADD_SPRITE_BLIP_FOR_CONTACT_POINT -348.5 -541.8 16.4 RADAR_SPRITE_TOMMY protect_contact_blip
 //START_NEW_SCRIPT protect_mission3_loop
 //flag_protect_mission2_passed = 1
