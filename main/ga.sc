@@ -212,7 +212,7 @@ otherdeal_carz = 9.5282
 otherdealheading = 315.6846
 scriptedcut3 = 0
 //haiti car 1
-createhncar1 = 0
+createhncar1 = 99 // Practice SCM
 hncar1x = 497.029999//442.592 
 hncar1y = -518.829//-562.375
 hncar1z = 10.6891//10.542
@@ -220,7 +220,7 @@ hncar1heading = 163.719//338.456
 hncar1xgoto = 455.754//458.458
 hncar1ygoto	= -528.0207//-510.308
 //haiti car 2
-createhncar2 = 0
+createhncar2 = 99 // Practice SCM
 hncar2x = 423.574
 hncar2y = -513.052
 hncar2z = 9.774
@@ -229,7 +229,7 @@ hncar2xgoto = 451.082
 hncar2ygoto	= -523.164
 hncar2zgoto = 10.4
 //haiti car 3
-createhncar3 = 0
+createhncar3 = 99 // Practice SCM
 hncar3x = 486.535 
 hncar3y = -537.118
 hncar3z = 11.191
@@ -262,9 +262,9 @@ bust_guy13 = 0
 bust_guy14 = 0
 bust_guy17 = 0
 bust_guy18 = 0
-car1hasgone	= 0
-car2hasgone	= 0
-car3hasgone	= 0
+car1hasgone	= 1 // Practice SCM
+car2hasgone	= 1 // Practice SCM
+car3hasgone	= 1 // Practice SCM
 car4hasgone = 0
 car5hasgone = 0
 introcut = 0
@@ -280,7 +280,7 @@ you_got_the_case_back_g3 = 0
 buddy1help = 0
 bustthedealtext = 0
 removetempblip_g3 = 0
-car1hasgone = 0
+// car1hasgone = 0
 // reset flags
 protect_deal_flag = 0
 diazmoved_g3 = 0
@@ -442,12 +442,14 @@ SET_VISIBILITY_OF_CLOSEST_OBJECT_OF_TYPE -647.0, -1323.0, 19.9 100.0 LODcargoshp
 SET_VISIBILITY_OF_CLOSEST_OBJECT_OF_TYPE -647.0, -1323.0, 19.9 100.0 LODargohull2 TRUE
 
 REQUEST_COLLISION -244.2799 -1360.6704
-SET_PLAYER_COORDINATES player1 453.956268 -504.376221 17.971191
-SET_PLAYER_HEADING player1 279.1362
-SET_CAMERA_BEHIND_PLAYER
+SET_PLAYER_COORDINATES player1 460.073883 -491.433716 11.071231 // Practice SCM
+SET_PLAYER_HEADING player1 12.0
 
 SET_AREA_VISIBLE VIS_MAIN_MAP
 
+// Practice SCM camera restore
+RESTORE_CAMERA_JUMPCUT
+SET_CAMERA_BEHIND_PLAYER
 
 // ****************************************END OF CUTSCENE**********************************
 
@@ -497,13 +499,27 @@ SET_CHAR_HEALTH buddy_g3 600
 CLEAR_CHAR_THREAT_SEARCH buddy_g3
 SET_CHAR_NEVER_TARGETTED buddy_g3 TRUE
 
+// Practice SCM
 protect_deal_flag = 2
-
-general3_mission_loop:
-WAIT 0
 IF LOCATE_PLAYER_ANY_MEANS_2D player1 457.6495 -512.88 100.0 100.0 FALSE
 	ALTER_WANTED_LEVEL player1 0
 ENDIF
+
+// Practice SCM - initialize explode flag
+VAR_INT g3_explosion
+g3_explosion = 0
+
+general3_mission_loop:
+WAIT 0
+
+// Practice SCM -- add input to explode lightpost 
+IF IS_BUTTON_PRESSED 0 4 // if L1 is pressed
+	IF g3_explosion = 0 // flag to prevent spam
+		ADD_EXPLOSION 434.484009 -513.243896 10.340638 EXPLOSION_GRENADE
+		g3_explosion = 1
+	ENDIF
+ENDIF
+
 					/////////////////////////////	Meet the Coke Baron	/////////////////////////////
 					
 //create the coke baron and his crew
@@ -1014,97 +1030,87 @@ AND protect_deal_flag < 13
 	ENDIF
 ENDIF
 
-//create cubans 
+//create cubans
+// Practice SCM removes some conditionals for speed
 IF protect_deal_flag = 7
 	IF NOT IS_CHAR_DEAD coke_baron_g3
 		IF NOT IS_CHAR_DEAD buddy_g3
-			IF LOCATE_STOPPED_PLAYER_ON_FOOT_3D player1 roofposx roofposy roofposz 1.0 1.0 2.0 TRUE
-				IF LOCATE_CHAR_ON_FOOT_3D buddy_g3 lanceposx lanceposy lanceposz 2.0 2.0 2.0 FALSE
-					
-					/*SET_PLAYER_CONTROL player1 OFF
-					SWITCH_WIDESCREEN ON*/
-					
-					SET_CAR_DENSITY_MULTIPLIER 0.0
-										
-					SET_CHAR_HEADING buddy_g3 lanceheadingpos
-					REMOVE_BLIP roof_blip_g3 
-					SET_CHAR_ONLY_DAMAGED_BY_PLAYER coke_baron_g3 TRUE
+			/*SET_PLAYER_CONTROL player1 OFF
+			SWITCH_WIDESCREEN ON*/
+			
+			SET_CAR_DENSITY_MULTIPLIER 0.0
+								
+			SET_CHAR_HEADING buddy_g3 lanceheadingpos
+			REMOVE_BLIP roof_blip_g3 
+			SET_CHAR_ONLY_DAMAGED_BY_PLAYER coke_baron_g3 TRUE
 
-					REQUEST_MODEL cuban
-					REQUEST_MODEL CBa // Cuban model a
-					REQUEST_MODEL HNa  // Haitian model a
-					REQUEST_MODEL HNb // Haitian model b
-					REQUEST_MODEL burrito  //van
-					REQUEST_MODEL voodoo		//haitian car
-					REQUEST_MODEL TEC9
+			REQUEST_MODEL cuban
+			REQUEST_MODEL CBa // Cuban model a
+			REQUEST_MODEL HNa  // Haitian model a
+			REQUEST_MODEL HNb // Haitian model b
+			REQUEST_MODEL burrito  //van
+			REQUEST_MODEL voodoo		//haitian car
+			REQUEST_MODEL TEC9
 
-					WHILE NOT HAS_MODEL_LOADED cuban
-						OR NOT HAS_MODEL_LOADED CBa
-						OR NOT HAS_MODEL_LOADED voodoo
-   						WAIT 0
-					ENDWHILE
-					
-					WHILE NOT HAS_MODEL_LOADED TEC9
-						OR NOT HAS_MODEL_LOADED HNa
-						OR NOT HAS_MODEL_LOADED HNb
-						OR NOT HAS_MODEL_LOADED burrito
-					WAIT 0
-					ENDWHILE
-																
-					CLEAR_AREA otherdeal_carx otherdeal_cary 500.0 500.0 TRUE
-													
-					//set up camera to view cubans coming in
-					CREATE_CAR cuban otherdeal_carx otherdeal_cary otherdeal_carz otherdeal_car
-					SET_CAN_BURST_CAR_TYRES otherdeal_car FALSE
-			   		SET_CAR_ONLY_DAMAGED_BY_PLAYER otherdeal_car TRUE 
-					SET_CAR_STRAIGHT_LINE_DISTANCE otherdeal_car 3
-					SET_CAR_HEADING otherdeal_car otherdealheading
-					SET_CAR_HEALTH otherdeal_car 3500
-					
-					CREATE_CHAR_INSIDE_CAR otherdeal_car PEDTYPE_GANG_CUBAN CBa cubandrugdealerboss	
-					GIVE_WEAPON_TO_CHAR cubandrugdealerboss WEAPONTYPE_TEC9 3000
-					CAR_SET_IDLE otherdeal_car
-					CLEAR_CHAR_THREAT_SEARCH cubandrugdealerboss
-					SET_CHAR_THREAT_SEARCH cubandrugdealerboss THREAT_GANG_HAITIAN
-					SET_CHAR_HEALTH cubandrugdealerboss 10  
-					SET_CHAR_NEVER_TARGETTED cubandrugdealerboss TRUE
+			WHILE NOT HAS_MODEL_LOADED cuban
+				OR NOT HAS_MODEL_LOADED CBa
+				OR NOT HAS_MODEL_LOADED voodoo
+				WAIT 0
+			ENDWHILE
+			
+			WHILE NOT HAS_MODEL_LOADED TEC9
+				OR NOT HAS_MODEL_LOADED HNa
+				OR NOT HAS_MODEL_LOADED HNb
+				OR NOT HAS_MODEL_LOADED burrito
+			WAIT 0
+			ENDWHILE
+														
+			CLEAR_AREA otherdeal_carx otherdeal_cary 500.0 500.0 TRUE
 											
-					CREATE_CHAR_AS_PASSENGER otherdeal_car PEDTYPE_GANG_CUBAN CBa 0 cubandrugdealer1
-					GIVE_WEAPON_TO_CHAR cubandrugdealer1 WEAPONTYPE_TEC9 3000
-					CLEAR_CHAR_THREAT_SEARCH cubandrugdealer1
-					SET_CHAR_THREAT_SEARCH cubandrugdealer1 THREAT_GANG_HAITIAN 
-					SET_CHAR_HEALTH cubandrugdealer1 10
-					SET_CHAR_AS_LEADER cubandrugdealer1 cubandrugdealerboss
-					SET_CHAR_NEVER_TARGETTED cubandrugdealer1 TRUE
+			//set up camera to view cubans coming in
+			CREATE_CAR cuban otherdeal_carx otherdeal_cary otherdeal_carz otherdeal_car
+			SET_CAN_BURST_CAR_TYRES otherdeal_car FALSE
+			SET_CAR_ONLY_DAMAGED_BY_PLAYER otherdeal_car TRUE 
+			SET_CAR_STRAIGHT_LINE_DISTANCE otherdeal_car 3
+			SET_CAR_HEADING otherdeal_car otherdealheading
+			SET_CAR_HEALTH otherdeal_car 3500
+			
+			CREATE_CHAR_INSIDE_CAR otherdeal_car PEDTYPE_GANG_CUBAN CBa cubandrugdealerboss	
+			GIVE_WEAPON_TO_CHAR cubandrugdealerboss WEAPONTYPE_TEC9 3000
+			CAR_SET_IDLE otherdeal_car
+			CLEAR_CHAR_THREAT_SEARCH cubandrugdealerboss
+			SET_CHAR_THREAT_SEARCH cubandrugdealerboss THREAT_GANG_HAITIAN
+			SET_CHAR_HEALTH cubandrugdealerboss 10  
+			SET_CHAR_NEVER_TARGETTED cubandrugdealerboss TRUE
+									
+			CREATE_CHAR_AS_PASSENGER otherdeal_car PEDTYPE_GANG_CUBAN CBa 0 cubandrugdealer1
+			GIVE_WEAPON_TO_CHAR cubandrugdealer1 WEAPONTYPE_TEC9 3000
+			CLEAR_CHAR_THREAT_SEARCH cubandrugdealer1
+			SET_CHAR_THREAT_SEARCH cubandrugdealer1 THREAT_GANG_HAITIAN 
+			SET_CHAR_HEALTH cubandrugdealer1 10
+			SET_CHAR_AS_LEADER cubandrugdealer1 cubandrugdealerboss
+			SET_CHAR_NEVER_TARGETTED cubandrugdealer1 TRUE
 
-					IF NOT IS_CHAR_DEAD coke_baron_g3 					
-						TURN_CHAR_TO_FACE_CHAR coke_baron_g3 cubandrugdealerboss
-					ENDIF
-
-					/*SET_FIXED_CAMERA_POSITION 461.699866 -476.137939 18.455095 0.0 0.0 0.0
-					POINT_CAMERA_AT_POINT 461.576569 -477.068756 18.110779 JUMP_CUT
-					SET_CAR_COORDINATES otherdeal_car 448.6620 -525.4344 9.5760 
-					SET_CAR_HEADING otherdeal_car 329.7276 
-					CAR_GOTO_COORDINATES_ACCURATE otherdeal_car 465.2766 -496.3094 10.829483*/
-					SET_CAR_COORDINATES otherdeal_car 465.2766 -496.3094 10.829483
-					//SET_CAR_CRUISE_SPEED otherdeal_car 8.0
-					TURN_CHAR_TO_FACE_CHAR scplayer cubandrugdealerboss
-										
-					PRINT_NOW ( GEN3_37 )  10000 2  //make sure Diaz safe
-
-					DISPLAY_NTH_ONSCREEN_COUNTER_WITH_STRING diaz_health_bar COUNTER_DISPLAY_BAR 1 ( GEN3_22 )
-					DISPLAY_NTH_ONSCREEN_COUNTER_WITH_STRING lance_health_bar COUNTER_DISPLAY_BAR 2 ( GEN3_49 )
-
-					TIMERA = 0
-					protect_deal_flag = 8
-
-				ELSE	   //safety timer
-					IF TIMERA > 35000 //safety timer
-						SET_CHAR_COORDINATES buddy_g3 lanceposx lanceposy lanceposz //safety timer
-						TIMERA = 0 //safety timer
-					ENDIF //safety timer
-				ENDIF
+			IF NOT IS_CHAR_DEAD coke_baron_g3 					
+				TURN_CHAR_TO_FACE_CHAR coke_baron_g3 cubandrugdealerboss
 			ENDIF
+
+			/*SET_FIXED_CAMERA_POSITION 461.699866 -476.137939 18.455095 0.0 0.0 0.0
+			POINT_CAMERA_AT_POINT 461.576569 -477.068756 18.110779 JUMP_CUT
+			SET_CAR_COORDINATES otherdeal_car 448.6620 -525.4344 9.5760 
+			SET_CAR_HEADING otherdeal_car 329.7276 
+			CAR_GOTO_COORDINATES_ACCURATE otherdeal_car 465.2766 -496.3094 10.829483*/
+			SET_CAR_COORDINATES otherdeal_car 465.2766 -496.3094 10.829483
+			//SET_CAR_CRUISE_SPEED otherdeal_car 8.0
+			TURN_CHAR_TO_FACE_CHAR scplayer cubandrugdealerboss
+								
+			PRINT_NOW ( GEN3_37 )  10000 2  //make sure Diaz safe
+
+			DISPLAY_NTH_ONSCREEN_COUNTER_WITH_STRING diaz_health_bar COUNTER_DISPLAY_BAR 1 ( GEN3_22 )
+			DISPLAY_NTH_ONSCREEN_COUNTER_WITH_STRING lance_health_bar COUNTER_DISPLAY_BAR 2 ( GEN3_49 )
+
+			TIMERA = 0
+			protect_deal_flag = 8	
 		ENDIF
 	ENDIF
 ENDIF
@@ -1128,9 +1134,12 @@ IF protect_deal_flag = 8
 								
 							SET_CHAR_THREAT_SEARCH coke_baron_g3 THREAT_GANG_HAITIAN
 							SET_CHAR_PERSONALITY coke_baron_g3 PEDSTAT_TOUGH_GUY
-																						
-				 			SET_CHAR_OBJ_LEAVE_CAR cubandrugdealerboss otherdeal_car
-							SET_CHAR_OBJ_LEAVE_CAR cubandrugdealer1 otherdeal_car
+
+							// Practice SCM - change from leave and walk to warp in place for speed														
+				 			// SET_CHAR_OBJ_LEAVE_CAR cubandrugdealerboss otherdeal_car
+							// SET_CHAR_OBJ_LEAVE_CAR cubandrugdealer1 otherdeal_car
+							WARP_CHAR_FROM_CAR_TO_COORD cubandrugdealerboss 461.459717 -494.802185 11.1
+							WARP_CHAR_FROM_CAR_TO_COORD cubandrugdealer1 462.499512 -495.662323 11.1
 				 			protect_deal_flag = 9
 							TIMERA = 0
 						ELSE	//safety timer
@@ -1208,7 +1217,7 @@ IF protect_deal_flag = 10
 ENDIF  			
 							 
 IF protect_deal_flag = 11
-	IF TIMERA > 4000
+	IF TIMERA > 0
 		IF NOT IS_CHAR_DEAD buddy_g3
 			IF NOT IS_CHAR_DEAD coke_barons_goon1
 				IF NOT IS_CHAR_DEAD coke_barons_goon2
@@ -1227,7 +1236,7 @@ IF protect_deal_flag = 11
 						PRINT_HELP (HELP45) // Press the ~h~L3~w~ button to duck. This will increase the accuracy of guns you are holding.
 
 						TIMERA = 0
-						TIMERB = 0
+						TIMERB = 40000 // Practice SCM
 						protect_deal_flag = 12
 					
 					ENDIF
@@ -1383,6 +1392,7 @@ ENDIF
 
 			///////////////////////////////////////////			FIRST GUYS FROM THE RIGHT		/////////////////////////////////////////
 
+// Practice SCM skips most cars and guys spawning by changing their initialization values to fail these conditionals
 IF protect_deal_flag = 12
 	
 	IF TIMERA > 5000
@@ -1827,8 +1837,8 @@ IF protect_deal_flag = 12
 	ENDIF
 //			
 //		   //////////////////////////////////////////// 1st van down the alley   ///////////////////////////////////
-		   
 
+		   
 	IF TIMERB > 41000
 			
 		IF createhncar4 = 0
@@ -2234,35 +2244,20 @@ IF protect_deal_flag = 12
 ENDIF
 
 
+// Practice SCM - shorten final check to just the guys in last 2 cars
 //kill all the dudes
 IF protect_deal_flag = 12
 	IF car5hasgone = 1
-		IF IS_CHAR_DEAD haiti_bust_guy1
-			IF IS_CHAR_DEAD haiti_bust_guy2
-				IF IS_CHAR_DEAD haiti_bust_guy3
-					IF IS_CHAR_DEAD haiti_bust_guy4
-						IF IS_CHAR_DEAD haiti_bust_guy5
-							IF IS_CHAR_DEAD haiti_bust_guy6
-								IF IS_CHAR_DEAD haiti_bust_guy7
-									IF IS_CHAR_DEAD haiti_bust_guy8
-										IF IS_CHAR_DEAD haiti_bust_guy11
-											IF IS_CHAR_DEAD haiti_bust_guy12
-												IF IS_CHAR_DEAD haiti_bust_guy13
-													IF IS_CHAR_DEAD haiti_bust_guy14
-														IF IS_CHAR_DEAD haiti_bust_guy17
-															IF IS_CHAR_DEAD haiti_bust_guy18
-																CLEAR_PRINTS
-																protect_deal_flag = 13
-																TIMERA = 0
-															ENDIF
-														ENDIF
-													ENDIF
-												ENDIF
-											ENDIF
-										ENDIF
-									ENDIF
-								ENDIF
-							ENDIF											  
+		IF IS_CHAR_DEAD haiti_bust_guy11
+			IF IS_CHAR_DEAD haiti_bust_guy12
+				IF IS_CHAR_DEAD haiti_bust_guy13
+					IF IS_CHAR_DEAD haiti_bust_guy14
+						IF IS_CHAR_DEAD haiti_bust_guy17
+							IF IS_CHAR_DEAD haiti_bust_guy18
+								CLEAR_PRINTS
+								protect_deal_flag = 13
+								TIMERA = 0
+							ENDIF
 						ENDIF
 					ENDIF
 				ENDIF
